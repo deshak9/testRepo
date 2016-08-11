@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "pieces.js",
+  "sourceRoot": "",
+  "sources": [
+    "pieces.ts"
+  ],
+  "names": [],
+  "mappings": ";AAAA,WAAY,KAAK;IACb,8CAAe,CAAA;IACf,gDAAgB,CAAA;IAChB,kDAAiB,CAAA;IACjB,kDAAiB,CAAA;IACjB,8CAAe,CAAA;IACf,8CAAe,CAAA;IACf,mCAAS,CAAA;IACT,6CAAc,CAAA;IACd,6CAAc,CAAA;IACd,iDAAgB,CAAA;IAChB,iDAAgB,CAAA;IAChB,+CAAe,CAAA;IACf,6CAAc,CAAA;AAClB,CAAC,EAdW,aAAK,KAAL,aAAK,QAchB;AAdD,IAAY,KAAK,GAAL,aAcX,CAAA"
+}

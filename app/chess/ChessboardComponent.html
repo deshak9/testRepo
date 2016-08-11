@@ -1,0 +1,28 @@
+<!--<div *ngFor="#row of fields; var rowindex=index" style="width: 630px; height: 52px; overflow: hidden;" >
+      <field *ng-for="#col of row; var colindex=index" [row]=rowindex [col]=colindex [piece]=col >
+      </div>
+</div>-->
+<style type="text/css">
+    .bg-gray {
+        background: #EEE;
+    }
+
+    .bg-white {
+        background: #FFF;
+    }
+</style>
+
+<table border="1" style="border-collapse: collapse; text-align: center;">
+    <tr *ngFor="let row of todos" style="width: 630px; height: 52px; overflow: hidden;">
+        <td *ngFor="let col of todos">
+            <img class="{{backgroundCSS(row,col)}}" width="52" height="52" src="{{imageLocation(row,col)}}"
+                 (dragstart)="ondragstart(row, col)"
+                 (dragover)="ondragover(row, col)"
+                 (drop)="ondragdrop(row, col, false)"
+                 (click)="onclick(row, col)"/>
+        </td>
+    </tr>
+</table>
+<div style="margin-top:20px;">
+<label style="margin-top:20px;margin-left: 200px;">{{whoseTurn}} turn !</label>
+</div>

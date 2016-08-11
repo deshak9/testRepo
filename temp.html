@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+Hello I am here
+<table>
+<button (click)="getAllItems()">GET</button>
+<button (click)="addItem()">POST</button>
+<tr *ngFor="let student of myItems">
+
+                  <td>{{ student.name }}</td>
+                  <td>{{ student.id }}</td>
+                  <td>{{ student.age }}</td>
+</tr>
+</table>
+</body>
+</html>
