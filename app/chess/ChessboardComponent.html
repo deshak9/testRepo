@@ -11,7 +11,10 @@
         background: #FFF;
     }
 </style>
+<div><label style="margin-top:20px;margin-left: 200px;">{{moveOpponent}} </label></div>
 
+
+<label style="margin-top:20px;margin-left: 200px;">Opponent Name {{opponentName}} </label>
 <table border="1" style="border-collapse: collapse; text-align: center;">
     <tr *ngFor="let row of todos" style="width: 630px; height: 52px; overflow: hidden;">
         <td *ngFor="let col of todos">
@@ -24,5 +27,5 @@
     </tr>
 </table>
 <div style="margin-top:20px;">
-<label style="margin-top:20px;margin-left: 200px;">{{whoseTurn}} turn !</label>
+    <label style="margin-top:20px;margin-left: 200px;">{{whoseTurn}} turn !</label>
 </div>

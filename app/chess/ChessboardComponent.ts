@@ -18,11 +18,23 @@ import * as io from 'socket.io-client';
 export class ChessboardComponent {
     socket = null;
 
+    opponentName:String = "";
+    canIPlay:boolean = false;
+    moveOpponent:String = "";
+    isWhite:boolean;
+
     constructor(private chessboard:Chessboard) {
         this.socket = io();
         this.socket.emit("new player added", {"name": "prabhat", "age": 27});
         this.socket.on('opponent move', function (data) {
             this.moveOpponentMove(data["fromRow"], data["fromCol"], data["toRow"], data["toCol"]);
+            this.moveOpponent = " " + data["fromRow"] + " " + data["fromCol"] + " " + data["toRow"] + " " + data["toCol"];
+        }.bind(this));
+
+        this.socket.on('game created', function (data) {
+            this.isWhite = data["isWhite"];
+            this.opponentName = data["opponentName"];
+            this.canIPlay = this.isWhite;    // If its white, then you can play
         }.bind(this));
     }
 
@@ -56,20 +68,21 @@ export class ChessboardComponent {
     }
 
     public ondragstart(row:number, col:number) {
-        this.chessboard.onClick(row, col);
-
+        this.chessboard.onClick(row, col, this.isWhite);
     }
 
     whoseTurn:string = "White";
 
     public moveOpponentMove(fromRow:number, fromCol:number, toRow:number, toCol:number) {
-        this.ondragstart(fromRow, fromCol);
-        this.ondragdrop(toRow, toCol, true);
+
+        this.chessboard.onClick(fromRow, fromCol, !this.isWhite);
+        this.canIPlay = this.chessboard.move(toRow, toCol, this.socket, true);
     }
 
     public ondragdrop(row:number, col:number, isOpponentMove:boolean) {
-        //alert(row + " drop " + col);
-        this.whoseTurn = this.chessboard.move(row, col, this.socket, isOpponentMove);
+        if (this.canIPlay) {
+            this.canIPlay = this.chessboard.move(row, col, this.socket, isOpponentMove);
+        }
 
     }
 

@@ -15,12 +15,21 @@ var ChessboardComponent = (function () {
     function ChessboardComponent(chessboard) {
         this.chessboard = chessboard;
         this.socket = null;
+        this.opponentName = "";
+        this.canIPlay = false;
+        this.moveOpponent = "";
         this.todos = [0, 1, 2, 3, 4, 5, 6, 7];
         this.whoseTurn = "White";
         this.socket = io();
         this.socket.emit("new player added", { "name": "prabhat", "age": 27 });
         this.socket.on('opponent move', function (data) {
-            this.ondragdrop();
+            this.moveOpponentMove(data["fromRow"], data["fromCol"], data["toRow"], data["toCol"]);
+            this.moveOpponent = " " + data["fromRow"] + " " + data["fromCol"] + " " + data["toRow"] + " " + data["toCol"];
+        }.bind(this));
+        this.socket.on('game created', function (data) {
+            this.isWhite = data["isWhite"];
+            this.opponentName = data["opponentName"];
+            this.canIPlay = this.isWhite; // If its white, then you can play
         }.bind(this));
     }
     ChessboardComponent.prototype.imageLocation = function (row, col) {
@@ -43,12 +52,16 @@ var ChessboardComponent = (function () {
         //this.chessboard.onClick(row, col);
     };
     ChessboardComponent.prototype.ondragstart = function (row, col) {
-        //alert(row + " " + col);
-        this.chessboard.onClick(row, col);
+        this.chessboard.onClick(row, col, this.isWhite);
     };
-    ChessboardComponent.prototype.ondragdrop = function (row, col) {
-        //alert(row + " drop " + col);
-        this.whoseTurn = this.chessboard.move(row, col, this.socket);
+    ChessboardComponent.prototype.moveOpponentMove = function (fromRow, fromCol, toRow, toCol) {
+        this.chessboard.onClick(fromRow, fromCol, !this.isWhite);
+        this.canIPlay = this.chessboard.move(toRow, toCol, this.socket, true);
+    };
+    ChessboardComponent.prototype.ondragdrop = function (row, col, isOpponentMove) {
+        if (this.canIPlay) {
+            this.canIPlay = this.chessboard.move(row, col, this.socket, isOpponentMove);
+        }
     };
     ChessboardComponent.prototype.ondragover = function (row, col) {
         event.preventDefault();

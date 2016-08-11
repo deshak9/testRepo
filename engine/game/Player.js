@@ -5,8 +5,9 @@ function Player(socket) {
 }
 
 var socket;
+var name;
 
-method.getPlayerId = function () {
+method.getSocketId = function () {
     return this.socket.id;
 }
 

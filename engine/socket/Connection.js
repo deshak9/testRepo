@@ -19,18 +19,25 @@ method.processClient = function (socket) {
         var player1 = socketConnection.getPlayer(socket);
         gameBuilder.buildGame(player1, player2);
 
-        player1.getSocket().emit("game created", "name:Prabhat");
-        player2.getSocket().emit("game created", "name:Prabhat");
+        player1.getSocket().emit("game created", {"isWhite": true, "opponentName": "Jonu"});
+        player2.getSocket().emit("game created", {"isWhite": false, "opponentName": "Monu"});
+
     }
 }
 
 method.processDisconnectedClient = function (socket) {
-    socketConnection.removeClientToPool(socket)
+    socketConnection.removeClientFromPool(socket)
 }
 
 
 method.removeClient = function (socket, data) {
-    socketConnection.removeClientToPool(socket)
+    socketConnection.removeClientFromPool(socket);
+}
+
+method.moveOpponent = function (socket, data) {
+    var game = gameBuilder.findGame(socket);
+    var opponentPlayer = game.findOpponentPlayer(socket);
+    opponentPlayer.getSocket().emit('opponent move', data);
 }
 
 module.exports = Connection;

@@ -36,7 +36,10 @@ export class Chessboard {
     private isWhiteAllowed = true;
     whoseTurn:string = "White";
 
-    public onClick(row:number, col:number):boolean {
+    public setIsWhite() {
+    }
+
+    public onClick(row:number, col:number, isWhite:boolean):boolean {
         if (this._fields[row][col] == null) {
             return false;
         }
@@ -44,11 +47,21 @@ export class Chessboard {
         this.clicked = true;
         this.fromRow = row;
         this.fromCol = col;
+
+        if (isWhite) {
+            this.isWhiteAllowed = true;
+            this.whoseTurn = "White";
+        }
+        else {
+            this.isWhiteAllowed = false;
+            this.whoseTurn = "Black";
+        }
+
         return true;
     }
 
 
-    public move(toRow:number, toCol:number, socket, isOpponentMove:boolean):string {
+    public move(toRow:number, toCol:number, socket, isOpponentMove:boolean):boolean {
         //alert(this.clicked + " Old Move " + this.fromRow + " " + this.fromCol + " new Points " + toRow + " " + toCol);
         if (this.clicked) {
             this.clicked = false;
@@ -75,12 +88,14 @@ export class Chessboard {
                             "toRow": toRow,
                             "toCol": toCol
                         });
+                        return false;
                     }
+                    return true;
                 }
 
             }
         }
-        return this.whoseTurn;
+        return true;
     }
 
 

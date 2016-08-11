@@ -16,19 +16,14 @@ var Connection = require("./engine/socket/Connection.js");
 
 var connection = new Connection();
 io.on('connection', function (socket) {
-    //console.log('a user connected S id ');
+
     socket.on('disconnect', function () {
         connection.processDisconnectedClient(socket)
         console.log('user disconnected');
     });
 
-    //connection.processClient(socket);
     socket.on('new player added', function (data) {
-        console.log(data["name"]);
-        console.log(data["age"]);
-        connection.processClient(socket, data);
-        //console.log(data + " I am working!!");
-
+        connection.processClient(socket);
     });
 
     socket.on('game end', function (data) {
@@ -36,15 +31,12 @@ io.on('connection', function (socket) {
     });
 
     socket.on('my move', function (data) {
-        connection.disconnectClient(socket, data);
+        connection.moveOpponent(socket, data);
     });
 
-    socket.on('opponent move', function (data) {
-        connection.disconnectClient(socket, data);
-    });
 });
 
 
-http.listen(3000, function () {
-    console.log('listening on *:3000');
+http.listen(3002, function () {
+    console.log('listening on *:3002');
 });
