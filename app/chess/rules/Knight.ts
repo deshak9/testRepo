@@ -6,8 +6,9 @@ import {Piece} from './Piece';
 })
 
 export class Knight extends Piece {
-    public constructor(isWhite:boolean) {
-        super(isWhite);
+    public constructor(isWhite:boolean, row:number, col:number) {
+        super(isWhite, row, col);
+        this.isEmpty = false;
     }
 
 
@@ -36,5 +37,55 @@ export class Knight extends Piece {
         }
 
         return false;
+    }
+
+    public predictMoveForSelectedPiece(field:Piece[][]) {
+        if ((this.row - 2) > -1 && (this.col - 1) > -1 &&
+            this.checkRules(this.row, this.col, this.row - 2, this.col - 1, field)) {
+
+            this.addToPredictionList(field[this.row - 2][this.col - 1]);
+        }
+
+        if ((this.row - 2) > -1 && (this.col + 1) < 8 &&
+            this.checkRules(this.row, this.col, this.row - 2, this.col + 1, field)) {
+
+            this.addToPredictionList(field[this.row - 2][this.col + 1]);
+        }
+
+        if ((this.row + 2) < 8 && (this.col - 1) > -1 &&
+            this.checkRules(this.row, this.col, this.row + 2, this.col - 1, field)) {
+
+            this.addToPredictionList(field[this.row + 2][this.col - 1]);
+        }
+
+        if ((this.row + 2) < 8 && (this.col + 1) < 8 &&
+            this.checkRules(this.row, this.col, this.row + 2, this.col + 1, field)) {
+
+            this.addToPredictionList(field[this.row + 2][this.col + 1]);
+        }
+
+        if ((this.row - 1) > -1 && (this.col - 2) > -1 &&
+            this.checkRules(this.row, this.col, this.row - 1, this.col - 2, field)) {
+
+            this.addToPredictionList(field[this.row - 1][this.col - 2]);
+        }
+
+        if ((this.row - 1) > -1 && (this.col + 2) < 8 &&
+            this.checkRules(this.row, this.col, this.row - 1, this.col + 2, field)) {
+
+            this.addToPredictionList(field[this.row - 1][this.col + 2]);
+        }
+
+        if ((this.row + 1) < 8 && (this.col - 2) > -1 &&
+            this.checkRules(this.row, this.col, this.row + 1, this.col - 2, field)) {
+
+            this.addToPredictionList(field[this.row + 1][this.col - 2]);
+        }
+
+        if ((this.row + 1) < 8 && (this.col + 2) < 8 &&
+            this.checkRules(this.row, this.col, this.row + 1, this.col + 2, field)) {
+
+            this.addToPredictionList(field[this.row + 1][this.col + 2]);
+        }
     }
 }

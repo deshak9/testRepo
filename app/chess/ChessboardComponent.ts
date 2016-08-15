@@ -17,13 +17,16 @@ import * as io from 'socket.io-client';
 
 export class ChessboardComponent {
     socket = null;
-
     opponentName:String = "";
     canIPlay:boolean = false;
     isWhite:boolean;
     blackThenWhite:String = "black-then-white";
     whiteThenBlack:String = "white-then-black";
     chessboardLoading:String = "chess-loading-show ";
+
+    clickCount:number = 0;
+    firstRowClick:number;
+    firstColClick:number;
 
     constructor(private chessboard:Chessboard) {
         this.socket = io();
@@ -53,10 +56,7 @@ export class ChessboardComponent {
     }
 
     public backgroundCSS(row:number, col:number):string {
-        if ((row + col) % 2 == 0)
-            return "bg-gray";
-        else
-            return "bg-white";
+        return this.chessboard.getBackgroundCSS(row, col);
     }
 
     private getPiece(row:number, col:number):Piece {
@@ -67,34 +67,38 @@ export class ChessboardComponent {
     private imageFileName(row:number, col:number):string {
 
         var piece = this.getPiece(row, col);
-        if (piece == null)
+        if (piece.isEmpty)
             return "empty.png";
 
-        return this.getPiece(row, col).getPieceImage();
+        return piece.getPieceImage();
     }
 
-    clickCount:number = 0;
-    firstRowClick:number;
-    firstColClick:number;
-
     public onclick(row:number, col:number) {
+
+        if (!this.canIPlay) {
+            return;
+        }
 
         if (this.clickCount == 0) {
             this.clickCount = 1;
             this.firstRowClick = row;
             this.firstColClick = col;
-            //this.chessboard.displayPrediction(); // TODO
+
             if (!this.chessboard.onClick(row, col, this.isWhite)) {
                 this.clickCount = 0;
+            } else {
+                this.chessboard.displayPrediction(row, col);
             }
         } else if (this.clickCount == 1) {
             if (this.firstRowClick == row && this.firstColClick == col) {
-                //this.chessboard.unDisplayPrediction() // TODO
+                this.chessboard.unDisplayPrediction(this.firstRowClick, this.firstColClick);
+                this.clickCount = 0;
             } else {
                 this.ondragdrop(row, col, false);
-
+                if (!this.canIPlay) { // if move is successfull then Can I play will be disabled till opponent play
+                    this.clickCount = 0;
+                }
             }
-            this.clickCount = 0;
         }
 
     }
@@ -106,8 +110,7 @@ export class ChessboardComponent {
     whoseTurn:string = "White";
 
     public moveOpponentMove(fromRow:number, fromCol:number, toRow:number, toCol:number) {
-
-        this.chessboard.onClick(fromRow, fromCol, !this.isWhite);
+        this.chessboard.onClick(fromRow, fromCol, !this.isWhite);  // moving opponent
         this.canIPlay = this.chessboard.move(toRow, toCol, this.socket, true);
     }
 
@@ -118,7 +121,8 @@ export class ChessboardComponent {
 
     }
 
-    public ondragover(row:number, col:number) {
+    public
+    ondragover(row:number, col:number) {
         event.preventDefault();
     }
 

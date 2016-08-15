@@ -17,8 +17,9 @@ var core_1 = require('@angular/core');
 var Piece_1 = require('./Piece');
 var Knight = (function (_super) {
     __extends(Knight, _super);
-    function Knight(isWhite) {
-        _super.call(this, isWhite);
+    function Knight(isWhite, row, col) {
+        _super.call(this, isWhite, row, col);
+        this.isEmpty = false;
     }
     Knight.prototype.getPieceImage = function () {
         if (this.isWhite)
@@ -42,11 +43,45 @@ var Knight = (function (_super) {
         }
         return false;
     };
+    Knight.prototype.predictMoveForSelectedPiece = function (field) {
+        if ((this.row - 2) > -1 && (this.col - 1) > -1 &&
+            this.checkRules(this.row, this.col, this.row - 2, this.col - 1, field)) {
+            this.addToPredictionList(field[this.row - 2][this.col - 1]);
+        }
+        if ((this.row - 2) > -1 && (this.col + 1) < 8 &&
+            this.checkRules(this.row, this.col, this.row - 2, this.col + 1, field)) {
+            this.addToPredictionList(field[this.row - 2][this.col + 1]);
+        }
+        if ((this.row + 2) < 8 && (this.col - 1) > -1 &&
+            this.checkRules(this.row, this.col, this.row + 2, this.col - 1, field)) {
+            this.addToPredictionList(field[this.row + 2][this.col - 1]);
+        }
+        if ((this.row + 2) < 8 && (this.col + 1) < 8 &&
+            this.checkRules(this.row, this.col, this.row + 2, this.col + 1, field)) {
+            this.addToPredictionList(field[this.row + 2][this.col + 1]);
+        }
+        if ((this.row - 1) > -1 && (this.col - 2) > -1 &&
+            this.checkRules(this.row, this.col, this.row - 1, this.col - 2, field)) {
+            this.addToPredictionList(field[this.row - 1][this.col - 2]);
+        }
+        if ((this.row - 1) > -1 && (this.col + 2) < 8 &&
+            this.checkRules(this.row, this.col, this.row - 1, this.col + 2, field)) {
+            this.addToPredictionList(field[this.row - 1][this.col + 2]);
+        }
+        if ((this.row + 1) < 8 && (this.col - 2) > -1 &&
+            this.checkRules(this.row, this.col, this.row + 1, this.col - 2, field)) {
+            this.addToPredictionList(field[this.row + 1][this.col - 2]);
+        }
+        if ((this.row + 1) < 8 && (this.col + 2) < 8 &&
+            this.checkRules(this.row, this.col, this.row + 1, this.col + 2, field)) {
+            this.addToPredictionList(field[this.row + 1][this.col + 2]);
+        }
+    };
     Knight = __decorate([
         core_1.Component({
             providers: [Piece_1.Piece]
         }), 
-        __metadata('design:paramtypes', [Boolean])
+        __metadata('design:paramtypes', [Boolean, Number, Number])
     ], Knight);
     return Knight;
 }(Piece_1.Piece));

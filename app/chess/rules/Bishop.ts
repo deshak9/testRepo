@@ -7,8 +7,9 @@ import from = require("core-js/fn/array/from");
 })
 
 export class Bishop extends Piece {
-    public constructor(isWhite:boolean) {
-        super(isWhite);
+    public constructor(isWhite:boolean, row:number, col:number) {
+        super(isWhite, row, col);
+        this.isEmpty = false;
     }
 
     public getPieceImage():string {

@@ -20,9 +20,9 @@ var ChessboardComponent = (function () {
         this.blackThenWhite = "black-then-white";
         this.whiteThenBlack = "white-then-black";
         this.chessboardLoading = "chess-loading-show ";
+        this.clickCount = 0;
         this.todos = [0, 1, 2, 3, 4, 5, 6, 7];
         this.todosreverse = [7, 6, 5, 4, 3, 2, 1, 0];
-        this.clickCount = 0;
         this.whoseTurn = "White";
         this.socket = io();
         this.socket.emit("new player added", { "name": "prabhat", "age": 27 });
@@ -46,44 +46,50 @@ var ChessboardComponent = (function () {
         return "app/img/" + this.imageFileName(row, col);
     };
     ChessboardComponent.prototype.backgroundCSS = function (row, col) {
-        if ((row + col) % 2 == 0)
-            return "bg-gray";
-        else
-            return "bg-white";
+        return this.chessboard.getBackgroundCSS(row, col);
     };
     ChessboardComponent.prototype.getPiece = function (row, col) {
         return this.chessboard.getFieldValue(row, col);
     };
     ChessboardComponent.prototype.imageFileName = function (row, col) {
         var piece = this.getPiece(row, col);
-        if (piece == null)
+        if (piece.isEmpty)
             return "empty.png";
-        return this.getPiece(row, col).getPieceImage();
+        return piece.getPieceImage();
     };
     ChessboardComponent.prototype.onclick = function (row, col) {
+        if (!this.canIPlay) {
+            return;
+        }
         if (this.clickCount == 0) {
             this.clickCount = 1;
             this.firstRowClick = row;
             this.firstColClick = col;
-            //this.chessboard.displayPrediction(); // TODO
             if (!this.chessboard.onClick(row, col, this.isWhite)) {
                 this.clickCount = 0;
+            }
+            else {
+                this.chessboard.displayPrediction(row, col);
             }
         }
         else if (this.clickCount == 1) {
             if (this.firstRowClick == row && this.firstColClick == col) {
+                this.chessboard.unDisplayPrediction(this.firstRowClick, this.firstColClick);
+                this.clickCount = 0;
             }
             else {
                 this.ondragdrop(row, col, false);
+                if (!this.canIPlay) {
+                    this.clickCount = 0;
+                }
             }
-            this.clickCount = 0;
         }
     };
     ChessboardComponent.prototype.ondragstart = function (row, col) {
         this.chessboard.onClick(row, col, this.isWhite);
     };
     ChessboardComponent.prototype.moveOpponentMove = function (fromRow, fromCol, toRow, toCol) {
-        this.chessboard.onClick(fromRow, fromCol, !this.isWhite);
+        this.chessboard.onClick(fromRow, fromCol, !this.isWhite); // moving opponent
         this.canIPlay = this.chessboard.move(toRow, toCol, this.socket, true);
     };
     ChessboardComponent.prototype.ondragdrop = function (row, col, isOpponentMove) {

@@ -1,15 +1,21 @@
 "use strict";
 var Piece = (function () {
-    function Piece(isWhite) {
+    function Piece(isWhite, row, col) {
         this.isKing = false;
-        this.ngfor = [];
         this._isWhite = false;
-        this.predictionLis = [];
+        this.isEmpty = true;
+        this.predictionLis = Array();
         this._isWhite = isWhite;
-        /*this.ngfor.push("hlleo");
-        this.ngfor.length = 0;
-        alert(this.ngfor.pop());*/
+        this.row = row;
+        this.col = col;
+        if ((row + col) % 2 == 0)
+            this.backgroundCSS = "bg-gray";
+        else
+            this.backgroundCSS = "bg-white";
     }
+    Piece.prototype.checkIfEmpty = function () {
+        return this.isEmpty;
+    };
     Object.defineProperty(Piece.prototype, "isWhite", {
         get: function () {
             return this._isWhite;
@@ -17,14 +23,31 @@ var Piece = (function () {
         enumerable: true,
         configurable: true
     });
-    Piece.prototype.setBackgroundCSS = function (bgCSS) {
-        this.backgroundCSS = bgCSS;
+    Piece.prototype.updateMyLocation = function (row, col) {
+        this.row = row;
+        this.col = col;
+        this.updateCSS();
+    };
+    Piece.prototype.updateCSS = function () {
+        if ((this.row + this.col) % 2 == 0)
+            this.backgroundCSS = "bg-gray";
+        else
+            this.backgroundCSS = "bg-white";
+    };
+    Piece.prototype.setExtraBackgroundCSS = function (bgCSS) {
+        this.backgroundCSS = this.backgroundCSS + " " + bgCSS;
+    };
+    Piece.prototype.removeExtraBackgroundCSS = function () {
+        this.updateCSS();
+    };
+    Piece.prototype.getBackgroundCSS = function () {
+        return this.backgroundCSS;
     };
     Piece.prototype.commonBeforeRule = function (fromRow, fromCol, toRow, toCol, _field) {
         if (fromRow == toRow && fromCol == toCol) {
             return false;
         }
-        if (_field[toRow][toCol] != null) {
+        if (!_field[toRow][toCol].isEmpty) {
             if (this.isWhite && _field[toRow][toCol].isWhite) {
                 return false;
             }
@@ -45,9 +68,11 @@ var Piece = (function () {
     Piece.prototype.getPieceImage = function () {
         return "";
     };
+    Piece.prototype.predictMoveForSelectedPiece = function (_field) {
+    };
     Piece.prototype.checkIfVerticalEmptyTillTargetField = function (col, fromRow, toRow, _field) {
         while (fromRow <= toRow) {
-            if (_field[fromRow][col] != null) {
+            if (!_field[fromRow][col].isEmpty) {
                 return false;
             }
             fromRow++;
@@ -56,7 +81,7 @@ var Piece = (function () {
     };
     Piece.prototype.checkIfHorizontalEmptyTillTargetField = function (row, fromCol, toCol, _field) {
         while (fromCol <= toCol) {
-            if (_field[row][fromCol] != null) {
+            if (!_field[row][fromCol].isEmpty) {
                 return false;
             }
             fromCol++;
@@ -65,7 +90,7 @@ var Piece = (function () {
     };
     Piece.prototype.checkIfDiagonallyForwardEmptyTillTargetField = function (fromRow, fromCol, toRow, toCol, _field) {
         while (fromCol <= toCol) {
-            if (_field[fromRow][fromCol] != null) {
+            if (!_field[fromRow][fromCol].isEmpty) {
                 return false;
             }
             fromRow++;
@@ -75,13 +100,35 @@ var Piece = (function () {
     };
     Piece.prototype.checkIfDiagonallyBackwardEmptyTillTargetField = function (fromRow, fromCol, toRow, toCol, _field) {
         while (fromRow <= toRow) {
-            if (_field[fromRow][fromCol] != null) {
+            if (!_field[fromRow][fromCol].isEmpty) {
                 return false;
             }
             fromRow++;
             fromCol--;
         }
         return true;
+    };
+    Piece.prototype.addToPredictionList = function (piece) {
+        this.predictionLis.push(piece);
+        piece.setExtraBackgroundCSS("gb-piece-selected");
+    };
+    Piece.prototype.findPieceInPredictionList = function (piece) {
+        if (this.predictionLis.indexOf(piece) >= 0) {
+            return true;
+        }
+        return false;
+    };
+    Piece.prototype.checkIfValidPiece = function (row, col) {
+        if (row < 8 && row > -1 && col < 8 && col > -1) {
+            return true;
+        }
+        return false;
+    };
+    Piece.prototype.clearPredictionList = function () {
+        this.predictionLis.forEach(function (piece) {
+            piece.removeExtraBackgroundCSS();
+        });
+        this.predictionLis.length = 0;
     };
     return Piece;
 }());

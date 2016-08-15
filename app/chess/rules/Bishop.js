@@ -17,8 +17,9 @@ var core_1 = require('@angular/core');
 var Piece_1 = require('./Piece');
 var Bishop = (function (_super) {
     __extends(Bishop, _super);
-    function Bishop(isWhite) {
-        _super.call(this, isWhite);
+    function Bishop(isWhite, row, col) {
+        _super.call(this, isWhite, row, col);
+        this.isEmpty = false;
     }
     Bishop.prototype.getPieceImage = function () {
         if (this.isWhite)
@@ -61,7 +62,7 @@ var Bishop = (function (_super) {
         core_1.Component({
             providers: [Piece_1.Piece]
         }), 
-        __metadata('design:paramtypes', [Boolean])
+        __metadata('design:paramtypes', [Boolean, Number, Number])
     ], Bishop);
     return Bishop;
 }(Piece_1.Piece));

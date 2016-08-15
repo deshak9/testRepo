@@ -19,8 +19,9 @@ var Rook_1 = require("./Rook");
 var Bishop_1 = require("./Bishop");
 var Queen = (function (_super) {
     __extends(Queen, _super);
-    function Queen(isWhite) {
-        _super.call(this, isWhite);
+    function Queen(isWhite, row, col) {
+        _super.call(this, isWhite, row, col);
+        this.isEmpty = false;
     }
     Queen.prototype.getPieceImage = function () {
         if (this.isWhite)
@@ -33,20 +34,20 @@ var Queen = (function (_super) {
             return false;
         }
         if (fromRow == toRow || fromCol == toCol) {
-            return new Rook_1.Rook(this.isWhite).validateRookMoves(fromRow, fromCol, toRow, toCol, _field);
+            return new Rook_1.Rook(this.isWhite, 0, 0).validateRookMoves(fromRow, fromCol, toRow, toCol, _field);
         }
         else {
             if (Math.abs(fromRow - toRow) != Math.abs(fromCol - toCol))
                 return false;
             // If queen move like bishop
-            return new Bishop_1.Bishop(this.isWhite).validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
+            return new Bishop_1.Bishop(this.isWhite, 0, 0).validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
         }
     };
     Queen = __decorate([
         core_1.Component({
             providers: [Piece_1.Piece]
         }), 
-        __metadata('design:paramtypes', [Boolean])
+        __metadata('design:paramtypes', [Boolean, Number, Number])
     ], Queen);
     return Queen;
 }(Piece_1.Piece));

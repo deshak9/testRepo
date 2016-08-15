@@ -10,8 +10,9 @@ import {Bishop} from "./Bishop";
 })
 
 export class Queen extends Piece {
-    public constructor(isWhite:boolean) {
-        super(isWhite);
+    public constructor(isWhite:boolean, row:number, col:number) {
+        super(isWhite, row, col);
+        this.isEmpty = false;
     }
 
 
@@ -28,13 +29,13 @@ export class Queen extends Piece {
         }
 
         if (fromRow == toRow || fromCol == toCol) { // if queen move like ROOK
-            return new Rook(this.isWhite).validateRookMoves(fromRow, fromCol, toRow, toCol, _field)
+            return new Rook(this.isWhite, 0, 0).validateRookMoves(fromRow, fromCol, toRow, toCol, _field)
         } else {
             if (Math.abs(fromRow - toRow) != Math.abs(fromCol - toCol))
                 return false;
 
             // If queen move like bishop
-            return new Bishop(this.isWhite).validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
+            return new Bishop(this.isWhite, 0, 0).validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
         }
     }
 }
