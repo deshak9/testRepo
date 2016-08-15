@@ -2,8 +2,13 @@
 var Piece = (function () {
     function Piece(isWhite) {
         this.isKing = false;
+        this.ngfor = [];
         this._isWhite = false;
+        this.predictionLis = [];
         this._isWhite = isWhite;
+        /*this.ngfor.push("hlleo");
+        this.ngfor.length = 0;
+        alert(this.ngfor.pop());*/
     }
     Object.defineProperty(Piece.prototype, "isWhite", {
         get: function () {
@@ -12,6 +17,9 @@ var Piece = (function () {
         enumerable: true,
         configurable: true
     });
+    Piece.prototype.setBackgroundCSS = function (bgCSS) {
+        this.backgroundCSS = bgCSS;
+    };
     Piece.prototype.commonBeforeRule = function (fromRow, fromCol, toRow, toCol, _field) {
         if (fromRow == toRow && fromCol == toCol) {
             return false;

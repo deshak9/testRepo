@@ -19,8 +19,8 @@ method.processClient = function (socket) {
         var player1 = socketConnection.getPlayer(socket);
         gameBuilder.buildGame(player1, player2);
 
-        player1.getSocket().emit("game created", {"isWhite": true, "opponentName": "Jonu"});
-        player2.getSocket().emit("game created", {"isWhite": false, "opponentName": "Monu"});
+        player1.getSocket().emit("game created", {"isWhite": false, "opponentName": "Jonu"});
+        player2.getSocket().emit("game created", {"isWhite": true, "opponentName": "Monu"});
 
     }
 }

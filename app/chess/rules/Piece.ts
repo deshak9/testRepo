@@ -1,15 +1,32 @@
+import {NgFor} from "@angular/common";
 export class Piece {
     public get isWhite():boolean {
         return this._isWhite;
     }
 
     public isKing:boolean = false;
+    public ngfor:Array<String> = [];
 
     public constructor(isWhite:boolean) {
         this._isWhite = isWhite;
+        /*this.ngfor.push("hlleo");
+        this.ngfor.length = 0;
+        alert(this.ngfor.pop());*/
     }
 
     private _isWhite:boolean = false;
+
+    isEmpty:boolean;
+    row:number;
+    col:number;
+    backgroundCSS:String;
+
+    predictionLis = [];
+
+    public setBackgroundCSS(bgCSS:String) {
+        this.backgroundCSS = bgCSS;
+
+    }
 
     public commonBeforeRule(fromRow:number, fromCol:number, toRow:number, toCol:number, _field:Piece[][]):boolean {
         if (fromRow == toRow && fromCol == toCol) {

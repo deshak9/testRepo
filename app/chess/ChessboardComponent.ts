@@ -20,25 +20,33 @@ export class ChessboardComponent {
 
     opponentName:String = "";
     canIPlay:boolean = false;
-    moveOpponent:String = "";
     isWhite:boolean;
+    blackThenWhite:String = "black-then-white";
+    whiteThenBlack:String = "white-then-black";
+    chessboardLoading:String = "chess-loading-show ";
 
     constructor(private chessboard:Chessboard) {
         this.socket = io();
         this.socket.emit("new player added", {"name": "prabhat", "age": 27});
         this.socket.on('opponent move', function (data) {
             this.moveOpponentMove(data["fromRow"], data["fromCol"], data["toRow"], data["toCol"]);
-            this.moveOpponent = " " + data["fromRow"] + " " + data["fromCol"] + " " + data["toRow"] + " " + data["toCol"];
         }.bind(this));
 
         this.socket.on('game created', function (data) {
             this.isWhite = data["isWhite"];
             this.opponentName = data["opponentName"];
             this.canIPlay = this.isWhite;    // If its white, then you can play
+            if (this.isWhite) {                      // show chessboard according to the user color
+                this.blackThenWhite = "black-then-white-show";
+            } else {
+                this.whiteThenBlack = "white-then-black-show";
+            }
+            this.chessboardLoading = "chess-loading-hide";
         }.bind(this));
     }
 
     public todos:Number[] = [0, 1, 2, 3, 4, 5, 6, 7];
+    public todosreverse:Number[] = [7, 6, 5, 4, 3, 2, 1, 0];
 
     public imageLocation(row:number, col:number):string {
         return "app/img/" + this.imageFileName(row, col);
@@ -51,20 +59,44 @@ export class ChessboardComponent {
             return "bg-white";
     }
 
-    private piece:Piece;
-
-    private imageFileName(row:number, col:number):string {
-        this.piece = this.chessboard.getFieldValue(row, col);
-
-        if (this.piece == null)
-            return "empty.png";
-
-        return this.piece.getPieceImage();
+    private getPiece(row:number, col:number):Piece {
+        return this.chessboard.getFieldValue(row, col);
     }
 
+
+    private imageFileName(row:number, col:number):string {
+
+        var piece = this.getPiece(row, col);
+        if (piece == null)
+            return "empty.png";
+
+        return this.getPiece(row, col).getPieceImage();
+    }
+
+    clickCount:number = 0;
+    firstRowClick:number;
+    firstColClick:number;
+
     public onclick(row:number, col:number) {
-        //alert(row + " " + col);
-        //this.chessboard.onClick(row, col);
+
+        if (this.clickCount == 0) {
+            this.clickCount = 1;
+            this.firstRowClick = row;
+            this.firstColClick = col;
+            //this.chessboard.displayPrediction(); // TODO
+            if (!this.chessboard.onClick(row, col, this.isWhite)) {
+                this.clickCount = 0;
+            }
+        } else if (this.clickCount == 1) {
+            if (this.firstRowClick == row && this.firstColClick == col) {
+                //this.chessboard.unDisplayPrediction() // TODO
+            } else {
+                this.ondragdrop(row, col, false);
+
+            }
+            this.clickCount = 0;
+        }
+
     }
 
     public ondragstart(row:number, col:number) {

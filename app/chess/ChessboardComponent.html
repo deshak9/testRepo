@@ -3,29 +3,131 @@
       </div>
 </div>-->
 <style type="text/css">
+    .chess-window {
+        width: 470px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .bg-gray {
-        background: #EEE;
+        width: 100%;
+        background: url("app/images/black-wood.jpg");
+        cursor: pointer;
     }
 
     .bg-white {
-        background: #FFF;
+        width: 100%;
+        background: url("app/images/white-wood.jpg");
+        cursor: pointer;
     }
+
+    .gb-piece-selected {
+        opacity: 0.4;
+    }
+
+    .white-then-black {
+        display: none;
+    }
+
+    .black-then-white {
+        display: none;
+    }
+
+    .white-then-black-show {
+        display: block;
+    }
+
+    .black-then-white-show {
+        display: block;
+    }
+
+    .chess-loading-show {
+        width: 60%;
+        height: 400px;
+        position: fixed;
+        left: 20%;
+        top: 10%;
+        background: #aaa;
+        background-image: url('app/images/chess-bg.jpg');
+        -moz-background-image: url("app/images/chess-bg.jpg");
+        background-size: 100%;
+        background-repeat: no-repeat;
+        box-shadow: 2px 3px 10px #777;
+        border-radius: 5px;
+        text-align: center;
+        color: #00DD00;
+        font-family: sans-serif;
+        font-weight: 100;
+        font-size: 14px;
+    }
+
+    .chess-loading-show h1 {
+        font-size: 20px;
+    }
+
+    .chess-loading-hide {
+        display: none;
+    }
+
+    /*Tilt the chessboard*/
+
+    .parent.perspective {
+        perspective: 10em;
+    }
+
+    .child {
+        margin: 0em;
+        /*width: 3em;
+        height: 3em;*/
+        background: tomato;
+        border: 1px solid rgba(0, 0, 0, .5);
+    }
+
+    .parent.transform .child {
+        transform: perspective(60em) rotateX(35deg);
+        background: deepskyblue;
+    }
+
 </style>
-<div><label style="margin-top:20px;margin-left: 200px;">{{moveOpponent}} </label></div>
 
+<div class="{{chessboardLoading}}">
+    <!--<img style="width: 100%;" src="app/images/chess-bg.jpg">-->
+    <h1>Waiting for your Opponent...</h1>
+</div>
 
-<label style="margin-top:20px;margin-left: 200px;">Opponent Name {{opponentName}} </label>
-<table border="1" style="border-collapse: collapse; text-align: center;">
-    <tr *ngFor="let row of todos" style="width: 630px; height: 52px; overflow: hidden;">
-        <td *ngFor="let col of todos">
-            <img class="{{backgroundCSS(row,col)}}" width="52" height="52" src="{{imageLocation(row,col)}}"
-                 (dragstart)="ondragstart(row, col)"
-                 (dragover)="ondragover(row, col)"
-                 (drop)="ondragdrop(row, col, false)"
-                 (click)="onclick(row, col)"/>
-        </td>
-    </tr>
-</table>
-<div style="margin-top:20px;">
-    <label style="margin-top:20px;margin-left: 200px;">{{whoseTurn}} turn !</label>
+<div class="parent transform chess-window">
+    <label style="">Opponent Name {{opponentName}} </label>
+    <div id="black-then-white" class="{{blackThenWhite}}">
+        <table border="0" class="child"
+               style="border-collapse: collapse;table-layout:fixed; width: 100%; text-align: center;">
+            <tr *ngFor="let row of todos" style="overflow: hidden;">
+                <td *ngFor="let col of todos">
+                    <img class="{{backgroundCSS(row,col)}}" src="{{imageLocation(row,col)}}"
+                         (click)="onclick(row, col)"/>
+
+                    <!--(dragstart)="ondragstart(row, col)"
+                         (dragover)="ondragover(row, col)"
+                         (drop)="ondragdrop(row, col, false)"-->
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="white-then-black" class="{{whiteThenBlack}}">
+        <table border="0" class="child"
+               style="border-collapse: collapse;table-layout:fixed; width: 100%; text-align: center;">
+            <tr *ngFor="let row of todosreverse" style="overflow: hidden;">
+                <td *ngFor="let col of todosreverse">
+                    <img class="{{backgroundCSS(row,col)}}" src="{{imageLocation(row,col)}}"
+                         (click)="onclick(row, col)"/>
+                    <!--(dragstart)="ondragstart(row, col)"
+                    (dragover)="ondragover(row, col)"
+                    (drop)="ondragdrop(row, col, false)"-->
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin-top:20px;">
+        <label style="margin-top:20px;margin-left: 200px;">{{whoseTurn}} turn !</label>
+    </div>
 </div>

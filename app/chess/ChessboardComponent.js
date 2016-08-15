@@ -17,19 +17,29 @@ var ChessboardComponent = (function () {
         this.socket = null;
         this.opponentName = "";
         this.canIPlay = false;
-        this.moveOpponent = "";
+        this.blackThenWhite = "black-then-white";
+        this.whiteThenBlack = "white-then-black";
+        this.chessboardLoading = "chess-loading-show ";
         this.todos = [0, 1, 2, 3, 4, 5, 6, 7];
+        this.todosreverse = [7, 6, 5, 4, 3, 2, 1, 0];
+        this.clickCount = 0;
         this.whoseTurn = "White";
         this.socket = io();
         this.socket.emit("new player added", { "name": "prabhat", "age": 27 });
         this.socket.on('opponent move', function (data) {
             this.moveOpponentMove(data["fromRow"], data["fromCol"], data["toRow"], data["toCol"]);
-            this.moveOpponent = " " + data["fromRow"] + " " + data["fromCol"] + " " + data["toRow"] + " " + data["toCol"];
         }.bind(this));
         this.socket.on('game created', function (data) {
             this.isWhite = data["isWhite"];
             this.opponentName = data["opponentName"];
             this.canIPlay = this.isWhite; // If its white, then you can play
+            if (this.isWhite) {
+                this.blackThenWhite = "black-then-white-show";
+            }
+            else {
+                this.whiteThenBlack = "white-then-black-show";
+            }
+            this.chessboardLoading = "chess-loading-hide";
         }.bind(this));
     }
     ChessboardComponent.prototype.imageLocation = function (row, col) {
@@ -41,15 +51,33 @@ var ChessboardComponent = (function () {
         else
             return "bg-white";
     };
+    ChessboardComponent.prototype.getPiece = function (row, col) {
+        return this.chessboard.getFieldValue(row, col);
+    };
     ChessboardComponent.prototype.imageFileName = function (row, col) {
-        this.piece = this.chessboard.getFieldValue(row, col);
-        if (this.piece == null)
+        var piece = this.getPiece(row, col);
+        if (piece == null)
             return "empty.png";
-        return this.piece.getPieceImage();
+        return this.getPiece(row, col).getPieceImage();
     };
     ChessboardComponent.prototype.onclick = function (row, col) {
-        //alert(row + " " + col);
-        //this.chessboard.onClick(row, col);
+        if (this.clickCount == 0) {
+            this.clickCount = 1;
+            this.firstRowClick = row;
+            this.firstColClick = col;
+            //this.chessboard.displayPrediction(); // TODO
+            if (!this.chessboard.onClick(row, col, this.isWhite)) {
+                this.clickCount = 0;
+            }
+        }
+        else if (this.clickCount == 1) {
+            if (this.firstRowClick == row && this.firstColClick == col) {
+            }
+            else {
+                this.ondragdrop(row, col, false);
+            }
+            this.clickCount = 0;
+        }
     };
     ChessboardComponent.prototype.ondragstart = function (row, col) {
         this.chessboard.onClick(row, col, this.isWhite);
