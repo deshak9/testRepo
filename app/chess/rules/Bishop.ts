@@ -51,4 +51,8 @@ export class Bishop extends Piece {
 
         return true;
     }
+
+    public predictMoveForSelectedPiece(_field:Piece[][]) {
+
+    }
 }
