@@ -4,7 +4,7 @@ var Piece = (function () {
         this.isKing = false;
         this._isWhite = false;
         this.isEmpty = true;
-        this.predictionLis = Array();
+        this.predictionList = Array();
         this._isWhite = isWhite;
         this.row = row;
         this.col = col;
@@ -43,15 +43,21 @@ var Piece = (function () {
     Piece.prototype.getBackgroundCSS = function () {
         return this.backgroundCSS;
     };
+    Piece.prototype.amIKillingOwnBot = function (piece) {
+        if (this.isWhite && piece.isWhite) {
+            return true;
+        }
+        if (!this.isWhite && !piece.isWhite) {
+            return true;
+        }
+        return false;
+    };
     Piece.prototype.commonBeforeRule = function (fromRow, fromCol, toRow, toCol, _field) {
         if (fromRow == toRow && fromCol == toCol) {
             return false;
         }
         if (!_field[toRow][toCol].isEmpty) {
-            if (this.isWhite && _field[toRow][toCol].isWhite) {
-                return false;
-            }
-            if (!this.isWhite && !_field[toRow][toCol].isWhite) {
+            if (this.amIKillingOwnBot(_field[toRow][toCol])) {
                 return false;
             }
         }
@@ -109,11 +115,11 @@ var Piece = (function () {
         return true;
     };
     Piece.prototype.addToPredictionList = function (piece) {
-        this.predictionLis.push(piece);
+        this.predictionList.push(piece);
         piece.setExtraBackgroundCSS("gb-piece-selected");
     };
     Piece.prototype.findPieceInPredictionList = function (piece) {
-        if (this.predictionLis.indexOf(piece) >= 0) {
+        if (this.predictionList.indexOf(piece) >= 0) {
             return true;
         }
         return false;
@@ -124,11 +130,129 @@ var Piece = (function () {
         }
         return false;
     };
+    Piece.prototype.canFieldBeAdded = function (row, col, field) {
+        if (!this.checkIfNotOutOfBoard(row, col)) {
+            return false;
+        }
+        var piece = field[row][col];
+        if (!piece.isEmpty) {
+            if (!this.amIKillingOwnBot(piece)) {
+                this.addToPredictionList(piece);
+            }
+            return false;
+        }
+        this.addToPredictionList(piece);
+        return true;
+    };
+    Piece.prototype.checkIfNotOutOfBoard = function (row, col) {
+        if (row < 8 && row > -1 && col < 8 && col > -1) {
+            return true;
+        }
+        return false;
+    };
     Piece.prototype.clearPredictionList = function () {
-        this.predictionLis.forEach(function (piece) {
+        this.predictionList.forEach(function (piece) {
             piece.removeExtraBackgroundCSS();
         });
-        this.predictionLis.length = 0;
+        this.predictionList.length = 0;
+    };
+    /*this.predictionList.push("hheeee");
+     this.predictionList.push("afag");
+     this.predictionList.length = 0;
+     alert("findMe " + this.pre dictionLis.indexOf("hheeeee") + this.findMe("hheeee"));
+     alert(this.predictionList.pop());
+     alert(this.predictionList.pop());*/
+    Piece.prototype.selectAllRookMoves = function (row, col, field) {
+        this.selectTop(row - 1, col, field);
+        this.selectBottom(row + 1, col, field);
+        this.selectLeft(row, col - 1, field);
+        this.selectRight(row, col + 1, field);
+    };
+    Piece.prototype.selectTop = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row - 1;
+        }
+    };
+    Piece.prototype.selectBottom = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row + 1;
+        }
+    };
+    Piece.prototype.selectLeft = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            col = col - 1;
+        }
+    };
+    Piece.prototype.selectRight = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            col = col + 1;
+        }
+    };
+    Piece.prototype.selectAllBishopMoves = function (row, col, field) {
+        this.selectTopLeft(row - 1, col - 1, field);
+        this.selectTopRight(row - 1, col + 1, field);
+        this.selectBottomLeft(row + 1, col - 1, field);
+        this.selectBottomRight(row + 1, col + 1, field);
+    };
+    Piece.prototype.selectTopLeft = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row - 1;
+            col = col - 1;
+        }
+    };
+    Piece.prototype.selectTopRight = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row - 1;
+            col = col + 1;
+        }
+    };
+    Piece.prototype.selectBottomLeft = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row + 1;
+            col = col - 1;
+        }
+    };
+    Piece.prototype.selectBottomRight = function (row, col, field) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row + 1;
+            col = col + 1;
+        }
+    };
+    Piece.prototype.checkIfKingInPredictionList = function () {
+        var result = null;
+        this.predictionList.forEach(function (piece) {
+            if (piece.isKing) {
+                result = piece;
+            }
+        });
+        return result;
+    };
+    Piece.prototype.getPredictionList = function () {
+        return this.predictionList;
     };
     return Piece;
 }());

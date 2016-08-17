@@ -58,6 +58,9 @@ var Bishop = (function (_super) {
         }
         return true;
     };
+    Bishop.prototype.predictMoveForSelectedPiece = function (_field) {
+        this.selectAllBishopMoves(this.row, this.col, _field);
+    };
     Bishop = __decorate([
         core_1.Component({
             providers: [Piece_1.Piece]

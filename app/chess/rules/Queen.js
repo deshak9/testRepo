@@ -21,6 +21,9 @@ var Queen = (function (_super) {
     __extends(Queen, _super);
     function Queen(isWhite, row, col) {
         _super.call(this, isWhite, row, col);
+        /// These just to call some of methods, don't use these pretending real
+        this.fakeBishop = new Bishop_1.Bishop(this.isWhite, 0, 0);
+        this.fakeRook = new Rook_1.Rook(this.isWhite, 0, 0);
         this.isEmpty = false;
     }
     Queen.prototype.getPieceImage = function () {
@@ -34,14 +37,18 @@ var Queen = (function (_super) {
             return false;
         }
         if (fromRow == toRow || fromCol == toCol) {
-            return new Rook_1.Rook(this.isWhite, 0, 0).validateRookMoves(fromRow, fromCol, toRow, toCol, _field);
+            return this.fakeRook.validateRookMoves(fromRow, fromCol, toRow, toCol, _field);
         }
         else {
             if (Math.abs(fromRow - toRow) != Math.abs(fromCol - toCol))
                 return false;
-            // If queen move like bishop
-            return new Bishop_1.Bishop(this.isWhite, 0, 0).validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
+            // If queen move like fakeBishop
+            return this.fakeBishop.validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
         }
+    };
+    Queen.prototype.predictMoveForSelectedPiece = function (_field) {
+        this.selectAllBishopMoves(this.row, this.col, _field);
+        this.selectAllRookMoves(this.row, this.col, _field);
     };
     Queen = __decorate([
         core_1.Component({

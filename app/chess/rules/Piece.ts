@@ -8,7 +8,7 @@ export class Piece {
     row:number;
     col:number;
     backgroundCSS:string;
-    predictionLis = Array < Piece >();
+    predictionList = Array < Piece >();
 
     public constructor(isWhite:boolean, row:number, col:number) {
         this._isWhite = isWhite;
@@ -56,15 +56,22 @@ export class Piece {
 
     }
 
+    public amIKillingOwnBot(piece:Piece):boolean {
+        if (this.isWhite && piece.isWhite) { // if user killing his own piece
+            return true;
+        }
+        if (!this.isWhite && !piece.isWhite) {
+            return true;
+        }
+        return false;
+    }
+
     public commonBeforeRule(fromRow:number, fromCol:number, toRow:number, toCol:number, _field:Piece[][]):boolean {
         if (fromRow == toRow && fromCol == toCol) {
             return false;
         }
         if (!_field[toRow][toCol].isEmpty) {
-            if (this.isWhite && _field[toRow][toCol].isWhite) { // if user killing his own piece
-                return false;
-            }
-            if (!this.isWhite && !_field[toRow][toCol].isWhite) {
+            if (this.amIKillingOwnBot(_field[toRow][toCol])) { // If i am killing own bot
                 return false;
             }
         }
@@ -132,12 +139,12 @@ export class Piece {
     }
 
     public addToPredictionList(piece:Piece) {
-        this.predictionLis.push(piece);
+        this.predictionList.push(piece);
         piece.setExtraBackgroundCSS("gb-piece-selected");
     }
 
     public findPieceInPredictionList(piece:Piece):boolean {
-        if (this.predictionLis.indexOf(piece) >= 0) {
+        if (this.predictionList.indexOf(piece) >= 0) {
             return true;
         }
         return false;
@@ -150,17 +157,151 @@ export class Piece {
         return false;
     }
 
-    public clearPredictionList() {
-        this.predictionLis.forEach(function (piece) {
-            piece.removeExtraBackgroundCSS();
-        })
-        this.predictionLis.length = 0;
+    public canFieldBeAdded(row:number, col:number, field:Piece[][]) {
+        if (!this.checkIfNotOutOfBoard(row, col)) {
+            return false;
+        }
+
+        let piece = field[row][col];
+
+        if (!piece.isEmpty) {
+            if (!this.amIKillingOwnBot(piece)) {
+                this.addToPredictionList(piece);
+            }
+            return false;
+        }
+
+        this.addToPredictionList(piece);
+        return true;
     }
 
-    /*this.predictionLis.push("hheeee");
-     this.predictionLis.push("afag");
-     this.predictionLis.length = 0;
+
+    public checkIfNotOutOfBoard(row:number, col:number) {
+        if (row < 8 && row > -1 && col < 8 && col > -1) {
+            return true;
+        }
+        return false;
+    }
+
+    public clearPredictionList() {
+        this.predictionList.forEach(function (piece) {
+            piece.removeExtraBackgroundCSS();
+        })
+        this.predictionList.length = 0;
+    }
+
+    /*this.predictionList.push("hheeee");
+     this.predictionList.push("afag");
+     this.predictionList.length = 0;
      alert("findMe " + this.pre dictionLis.indexOf("hheeeee") + this.findMe("hheeee"));
-     alert(this.predictionLis.pop());
-     alert(this.predictionLis.pop());*/
+     alert(this.predictionList.pop());
+     alert(this.predictionList.pop());*/
+
+
+    public selectAllRookMoves(row:number, col:number, field:Piece[][]) {
+        this.selectTop(row - 1, col, field);
+        this.selectBottom(row + 1, col, field);
+        this.selectLeft(row, col - 1, field);
+        this.selectRight(row, col + 1, field);
+    }
+
+    private selectTop(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row - 1;
+        }
+
+    }
+
+    private selectBottom(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row + 1;
+        }
+    }
+
+    private selectLeft(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            col = col - 1;
+        }
+    }
+
+    private selectRight(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+
+            col = col + 1;
+        }
+    }
+
+    public selectAllBishopMoves(row:number, col:number, field:Piece[][]) {
+        this.selectTopLeft(row - 1, col - 1, field);
+        this.selectTopRight(row - 1, col + 1, field);
+        this.selectBottomLeft(row + 1, col - 1, field);
+        this.selectBottomRight(row + 1, col + 1, field);
+    }
+
+    public selectTopLeft(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row - 1;
+            col = col - 1;
+        }
+    }
+
+    public selectTopRight(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row - 1;
+            col = col + 1;
+        }
+    }
+
+    public selectBottomLeft(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row + 1;
+            col = col - 1;
+        }
+    }
+
+    public selectBottomRight(row:number, col:number, field:Piece[][]) {
+        while (1) {
+            if (!this.canFieldBeAdded(row, col, field)) {
+                break;
+            }
+            row = row + 1;
+            col = col + 1;
+        }
+    }
+
+    public checkIfKingInPredictionList():Piece {
+        let result = null;
+        this.predictionList.forEach(function (piece) {
+            if (piece.isKing) {
+                result = piece;
+            }
+        })
+        return result;
+    }
+
+    public getPredictionList():Array < Piece > {
+        return this.predictionList;
+    }
+
 }

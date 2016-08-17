@@ -7,6 +7,7 @@ import {Bishop} from "./rules/Bishop";
 import {Queen} from "./rules/Queen";
 import {King} from "./rules/King";
 import from = require("core-js/fn/array/from");
+import is = require("core-js/fn/object/is");
 
 export class Chessboard {
     private _fields:Piece[][] = [
@@ -120,11 +121,8 @@ export class Chessboard {
                 this._fields[this.fromRow][this.fromCol].updateMyLocation(this.fromRow, this.fromCol);
                 this._fields[toRow][toCol].updateMyLocation(toRow, toCol);
 
-                if (!this._fields[toRow][toCol].isEmpty && this._fields[toRow][toCol].isKing) {
-                    /*if (this._fields[this.fromRow][this.fromCol].isWhite)
-                     alert("White Wins!!!!!");
-                     else
-                     alert("Black Wins!!!!!");*/
+                if (isOpponentMove) {
+                    this.lookForCheckMate(toRow, toCol, socket);
                 }
 
                 if (!isOpponentMove) {
@@ -136,6 +134,31 @@ export class Chessboard {
         return true;
     }
 
+    private lookForCheckMate(row:number, col:number, socket) {
+        let piece = this._fields[row][col];
+
+        // I think we should put config, if we ant to change background on prediction list building
+        piece.predictMoveForSelectedPiece(this._fields);
+
+        // we need  to create Prediction list before calling this method
+        let kingPiece = piece.checkIfKingInPredictionList();
+
+        if (kingPiece != null) {
+            kingPiece.predictMoveForSelectedPiece(this._fields);
+            let kingPredictionList = kingPiece.getPredictionList();
+
+            let isCheckMate = true;
+            kingPredictionList.forEach(function (p) {
+                if (!piece.findPieceInPredictionList(p)) {
+                    isCheckMate = false;
+                }
+            })
+
+            if (isCheckMate) {
+                this.emitLostTheGame(socket);
+            }
+        }
+    }
 
     private callOpponent(socket, toRow:number, toCol:number) {
         socket.emit("my move", {
@@ -143,6 +166,12 @@ export class Chessboard {
             "fromCol": this.fromCol,
             "toRow": toRow,
             "toCol": toCol
+        });
+    }
+
+    private emitLostTheGame(socket) {
+        socket.emit("lost the game", {
+            "checkMate": "checkMate"
         });
     }
 }

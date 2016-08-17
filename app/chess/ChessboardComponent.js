@@ -41,6 +41,21 @@ var ChessboardComponent = (function () {
             }
             this.chessboardLoading = "chess-loading-hide";
         }.bind(this));
+        this.socket.on('I lost the game', function (data) {
+            if (data['iLost']) {
+                if (this.isWhite)
+                    alert("Check mate: Black wins");
+                else
+                    alert("Check mate: White Wins");
+            }
+            else {
+                if (this.isWhite)
+                    alert("Check mate: White wins");
+                else
+                    alert("Check mate: Black Wins");
+            }
+            this.canIPlay = false;
+        }.bind(this));
     }
     ChessboardComponent.prototype.imageLocation = function (row, col) {
         return "app/img/" + this.imageFileName(row, col);

@@ -54,4 +54,8 @@ export class Rook extends Piece {
         }
         return true;
     }
+
+    public predictMoveForSelectedPiece(_field:Piece[][]) {
+        this.selectAllRookMoves(this.row, this.col, _field);
+    }
 }

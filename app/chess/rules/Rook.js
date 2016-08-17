@@ -59,6 +59,9 @@ var Rook = (function (_super) {
         }
         return true;
     };
+    Rook.prototype.predictMoveForSelectedPiece = function (_field) {
+        this.selectAllRookMoves(this.row, this.col, _field);
+    };
     Rook = __decorate([
         core_1.Component({
             providers: [Piece_1.Piece]

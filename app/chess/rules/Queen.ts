@@ -15,6 +15,9 @@ export class Queen extends Piece {
         this.isEmpty = false;
     }
 
+    /// These just to call some of methods, don't use these pretending real
+    fakeBishop:Bishop = new Bishop(this.isWhite, 0, 0);
+    fakeRook:Rook = new Rook(this.isWhite, 0, 0);
 
     public getPieceImage():string {
         if (this.isWhite)
@@ -29,13 +32,18 @@ export class Queen extends Piece {
         }
 
         if (fromRow == toRow || fromCol == toCol) { // if queen move like ROOK
-            return new Rook(this.isWhite, 0, 0).validateRookMoves(fromRow, fromCol, toRow, toCol, _field)
+            return this.fakeRook.validateRookMoves(fromRow, fromCol, toRow, toCol, _field)
         } else {
             if (Math.abs(fromRow - toRow) != Math.abs(fromCol - toCol))
                 return false;
 
-            // If queen move like bishop
-            return new Bishop(this.isWhite, 0, 0).validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
+            // If queen move like fakeBishop
+            return this.fakeBishop.validateBishopMove(fromRow, fromCol, toRow, toCol, _field);
         }
+    }
+
+    public predictMoveForSelectedPiece(_field:Piece[][]) {
+        this.selectAllBishopMoves(this.row, this.col, _field);
+        this.selectAllRookMoves(this.row, this.col, _field);
     }
 }

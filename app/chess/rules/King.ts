@@ -30,4 +30,16 @@ export class King extends Piece {
 
         return true;
     }
+
+    public predictMoveForSelectedPiece(_field:Piece[][]) {
+        this.canFieldBeAdded(this.row - 1, this.col, _field);
+        this.canFieldBeAdded(this.row + 1, this.col, _field);
+        this.canFieldBeAdded(this.row, this.col - 1, _field);
+        this.canFieldBeAdded(this.row, this.col + 1, _field);
+
+        this.canFieldBeAdded(this.row - 1, this.col - 1, _field);
+        this.canFieldBeAdded(this.row + 1, this.col - 1, _field);
+        this.canFieldBeAdded(this.row - 1, this.col + 1, _field);
+        this.canFieldBeAdded(this.row + 1, this.col + 1, _field);
+    }
 }

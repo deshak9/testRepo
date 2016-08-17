@@ -34,10 +34,21 @@ method.removeClient = function (socket, data) {
     socketConnection.removeClientFromPool(socket);
 }
 
+method.endGameWithWinner = function (socket, data) {
+    var opponentPlayer = this.getOpponentPlayer(socket);
+
+    socket.emit("I lost the game", {"iLost": true});
+    opponentPlayer.getSocket().emit("I lost the game", {"iLost": false});
+}
+
 method.moveOpponent = function (socket, data) {
-    var game = gameBuilder.findGame(socket);
-    var opponentPlayer = game.findOpponentPlayer(socket);
+    var opponentPlayer = this.getOpponentPlayer(socket);
     opponentPlayer.getSocket().emit('opponent move', data);
+}
+
+method.getOpponentPlayer = function (socket) {
+    var game = gameBuilder.findGame(socket);
+    return game.findOpponentPlayer(socket);
 }
 
 module.exports = Connection;

@@ -5,6 +5,7 @@ var io = require('socket.io')(http);
 
 app.use('/node_modules', express.static(__dirname + '/node_modules/'));
 app.use('/app', express.static(__dirname + '/app/'));
+app.use('/suc', express.static(__dirname + '/suc/'));
 app.use('/systemjs.config.js', express.static(__dirname + '/systemjs.config.js'));
 
 app.get('/', function (req, res) {
@@ -33,6 +34,10 @@ io.on('connection', function (socket) {
     socket.on('my move', function (data) {
         connection.moveOpponent(socket, data);
     });
+
+    socket.on('lost the game', function (data) {
+        connection.endGameWithWinner(socket, data);
+    })
 
 });
 

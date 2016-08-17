@@ -11,9 +11,9 @@
     <script src="node_modules/systemjs/dist/system.src.js"></script>
     <!-- 2. Configure SystemJS -->
     <script src="systemjs.config.js"></script>
-    <script>
-      System.import('app').catch(function(err){ console.error(err); });
-    </script>
+    <!--<script>
+      System.import('dist/main').catch(function(err){ console.error(err); });
+    </script>-->
     <style type="text/css">
       #hold-on{
         width: 200px;
@@ -40,5 +40,6 @@
 
     <my-app><div id="hold-on"><p>Hold on...</p></div></my-app>
     <!--<chat><div id="hold-on"><p>Hold on...</p></div></chat>-->
+    <script src="suc/bundle.min.js"></script>
   </body>
 </html>

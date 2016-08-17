@@ -36,6 +36,16 @@ var King = (function (_super) {
             return false;
         return true;
     };
+    King.prototype.predictMoveForSelectedPiece = function (_field) {
+        this.canFieldBeAdded(this.row - 1, this.col, _field);
+        this.canFieldBeAdded(this.row + 1, this.col, _field);
+        this.canFieldBeAdded(this.row, this.col - 1, _field);
+        this.canFieldBeAdded(this.row, this.col + 1, _field);
+        this.canFieldBeAdded(this.row - 1, this.col - 1, _field);
+        this.canFieldBeAdded(this.row + 1, this.col - 1, _field);
+        this.canFieldBeAdded(this.row - 1, this.col + 1, _field);
+        this.canFieldBeAdded(this.row + 1, this.col + 1, _field);
+    };
     King = __decorate([
         core_1.Component({
             providers: [Piece_1.Piece]

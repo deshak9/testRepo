@@ -1,6 +1,7 @@
 import {Component, Query, QueryList, Provider} from '@angular/core';
 import {Piece} from './Piece';
 import from = require("core-js/fn/array/from");
+import {root} from "rxjs/util/root";
 
 @Component({
     providers: [Piece]

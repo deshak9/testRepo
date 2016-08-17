@@ -90,7 +90,8 @@ var Chessboard = (function () {
                 this.isWhiteAllowed = this.isWhiteAllowed ? false : true;
                 this._fields[this.fromRow][this.fromCol].updateMyLocation(this.fromRow, this.fromCol);
                 this._fields[toRow][toCol].updateMyLocation(toRow, toCol);
-                if (!this._fields[toRow][toCol].isEmpty && this._fields[toRow][toCol].isKing) {
+                if (isOpponentMove) {
+                    this.lookForCheckMate(toRow, toCol, socket);
                 }
                 if (!isOpponentMove) {
                     this.callOpponent(socket, toRow, toCol);
@@ -100,12 +101,37 @@ var Chessboard = (function () {
         }
         return true;
     };
+    Chessboard.prototype.lookForCheckMate = function (row, col, socket) {
+        var piece = this._fields[row][col];
+        // I think we should put config, if we ant to change background on prediction list building
+        piece.predictMoveForSelectedPiece(this._fields);
+        // we need  to create Prediction list before calling this method
+        var kingPiece = piece.checkIfKingInPredictionList();
+        if (kingPiece != null) {
+            kingPiece.predictMoveForSelectedPiece(this._fields);
+            var kingPredictionList = kingPiece.getPredictionList();
+            var isCheckMate_1 = true;
+            kingPredictionList.forEach(function (p) {
+                if (!piece.findPieceInPredictionList(p)) {
+                    isCheckMate_1 = false;
+                }
+            });
+            if (isCheckMate_1) {
+                this.emitLostTheGame(socket);
+            }
+        }
+    };
     Chessboard.prototype.callOpponent = function (socket, toRow, toCol) {
         socket.emit("my move", {
             "fromRow": this.fromRow,
             "fromCol": this.fromCol,
             "toRow": toRow,
             "toCol": toCol
+        });
+    };
+    Chessboard.prototype.emitLostTheGame = function (socket) {
+        socket.emit("lost the game", {
+            "checkMate": "checkMate"
         });
     };
     return Chessboard;

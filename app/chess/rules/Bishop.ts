@@ -53,6 +53,6 @@ export class Bishop extends Piece {
     }
 
     public predictMoveForSelectedPiece(_field:Piece[][]) {
-
+        this.selectAllBishopMoves(this.row, this.col, _field);
     }
 }
